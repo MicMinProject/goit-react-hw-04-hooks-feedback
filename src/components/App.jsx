@@ -1,4 +1,5 @@
-import Feedback from './Feedback.jsx';
+import React from 'react';
+import Statistics from './Statistics.jsx';
 
 export const App = () => {
   return (
@@ -9,11 +10,14 @@ export const App = () => {
         justifyContent: 'center',
         alignItems: 'center',
         fontSize: 40,
-        textTransform: 'uppercase',
         color: '#010101',
       }}
     >
-      <Feedback />
+      <Statistics good={0}
+      neutral={0}
+      bad={0}
+      total={0}
+      positivePercentage={0}/>
     </div>
   );
 };
