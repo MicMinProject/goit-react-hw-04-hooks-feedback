@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 /** @jsxImportSource @emotion/react */
 import { jsx } from '@emotion/react';
 import Section from './Section.jsx';
@@ -12,71 +12,47 @@ const options={
   labelBad: 'Bad',
 }
 
-class Statistics extends React.Component {
+function Statistics() {
 
-  constructor(props){
-    super(props);
-    this.state = {
-      good: this.props.good,
-      neutral: this.props.neutral,
-      bad: this.props.bad,
-      total: this.props.total,
-      positivePercentage: this.props.positivePercentage,
-    }
-  }
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [positivePercentage, setPositivePercentage] = useState(0);
   
-  
-  incrementGood =()=>{
-      this.setState((state)=>({
-         good: state.good + 1
-        }));
-        
-        this.countTotalFeedback();
-        this.countPositiveFeedbackPercentage()
-  }
-  incrementNeutral =()=>{
-      this.setState((state)=>({
-          neutral: state.neutral + 1
-        }));
-       
-        this.countTotalFeedback();
-        this.countPositiveFeedbackPercentage()
-  }
-  incrementBad =()=>{
-      this.setState((state)=>({
-          bad: state.bad + 1
-        }));
-        
-        this.countTotalFeedback();
-        this.countPositiveFeedbackPercentage()
-  }
-  countTotalFeedback=()=>{
-    this.setState((state)=>({
-      total: state.good + state.neutral + state.bad
-    }))
-  }
-  countPositiveFeedbackPercentage=()=>{
-    this.setState((state)=>({
-      positivePercentage: Math.round((state.good / state.total) * 100)
-    }))
-  }
+ const incrementFuncs = {
+  incrementGood: ()=>{
+      setGood(good + 1);
+  },
+  incrementNeutral: ()=>{
+      setNeutral(neutral + 1);
+  },
+  incrementBad: ()=>{
+      setBad(bad + 1);
+  },
+}
+  useEffect(() => {
+    setTotal( good + neutral + bad);
+  },[good, neutral, bad]);
 
-  render() {
-    
-    return(
+  useEffect(() => {
+    setPositivePercentage( Math.round((good / total) * 100));
+  },[total]);
+
+  return(
       <div>
         <Section title='Please leave feedback'>
-          <FeedbackOptions options={options} onLeaveFeedback={this}  />
+          <FeedbackOptions options={options} onLeaveFeedback={incrementFuncs}  />
         </Section>
         <Section title='Statistics'>
-          {this.state.total === 0 ? (<Notification message='There is no feedback' />) : 
+          {total === 0 ? (<Notification message='There is no feedback' />) : 
           (
             <>
-              <p>Good: {this.state.good}</p>
-              <p>Neutral: {this.state.neutral}</p>
-              <p>Bad: {this.state.bad}</p>
-              {this.state.total === undefined ? <p>Total: 0</p> : <p>Total: {this.state.total}</p>}
-              {this.state.positivePercentage === undefined ? <p>Positive percentage: 0%</p> : <p>Positive percentage: {this.state.positivePercentage}%</p>}
+              <p>Good: {good}</p>
+              <p>Neutral: {neutral}</p>
+              <p>Bad: {bad}</p>
+              <p>Total: {total}</p>
+              <p>Positive percentage: {positivePercentage}%</p>
             </>
           )}
         </Section>
@@ -84,8 +60,16 @@ class Statistics extends React.Component {
       </div>
 
     )
-  }
+  
 
+}
+
+Statistics.propTypes = {
+  good: PropTypes.number,
+  neutral: PropTypes.number,
+  bad: PropTypes.number,
+  total: PropTypes.number,
+  positivePercentage: PropTypes.number,
 }
 
 export default Statistics;
